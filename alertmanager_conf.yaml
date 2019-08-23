@@ -1,0 +1,14 @@
+route:
+    repeat_interval: 15s
+    group_interval: 15s
+    receiver: 'email'
+
+receivers:
+    - name: 'email'
+      email_configs:
+      - from: 
+        to: 
+        smarthost: 
+        auth_username: ""
+        auth_password: ""
+        hello: 

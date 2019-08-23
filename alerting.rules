@@ -1,0 +1,12 @@
+groups:
+- name: cloudwatchexporter.rules
+  rules:
+  - alert: Too many requests count
+    annotations:
+      description: 'Numero de requisicoes {{ $value }} da elb {{ $labels }} falhou no {{ $labels.instance  }}!'
+      summary: Num de req maior que {{ $value  }}
+    expr: aws_elb_request_count_sum > 9000
+    for: 1m
+    labels:
+      severity: critical
+

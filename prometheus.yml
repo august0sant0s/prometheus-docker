@@ -1,0 +1,33 @@
+global:
+  scrape_interval:     15s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+  evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
+
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets:
+      - alertmanager:9093
+
+rule_files:
+  - /etc/prometheus/alerting.rules
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+    - targets: ['localhost:9090']
+
+  - job_name: 'cloudwatch'
+    scrape_interval: 120s
+    scrape_timeout: 120s
+    tls_config:
+      insecure_skip_verify: true
+    static_configs:
+    - targets: ['cloudwatchexporter:9106']
+
+  - job_name: 'cadvisor'
+    scrape_interval: 10s
+    scrape_timeout: 10s
+    tls_config:
+      insecure_skip_verify: true
+    static_configs:
+        - targets: ['cadvisor:8080']
