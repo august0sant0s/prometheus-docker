@@ -22,7 +22,16 @@ scrape_configs:
     tls_config:
       insecure_skip_verify: true
     static_configs:
-    - targets: ['cloudwatchexporter:9106']
+    - targets: ['cloudwatchexporter_oregon:9106']
+    - targets: ['cloudwatchexporter_virginia:9106']
+
+  - job_name: 'sqs-exporter'
+    scrape_interval: 120s
+    scrape_timeout: 120s
+    tls_config:
+      insecure_skip_verify: true
+    static_configs:
+    - targets: ['sqs-exporter:9384']
 
   - job_name: 'cadvisor'
     scrape_interval: 10s
@@ -30,4 +39,5 @@ scrape_configs:
     tls_config:
       insecure_skip_verify: true
     static_configs:
-        - targets: ['cadvisor:8080']
+    - targets: ['cadvisor:8080']
+

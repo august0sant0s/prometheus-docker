@@ -1,0 +1,34 @@
+---
+region: us-east-1
+metrics:
+- aws_namespace: AWS/ELB
+  aws_metric_name: RequestCount
+  aws_dimensions: [AvailabilityZone,LoadBalancerName]
+  aws_statistics: [Sum]
+  set_timestamp: false
+
+  #- aws_namespace: AWS/SQS
+  #  aws_metric_name: ApproximateNumberOfMessagesVisible
+  #  aws_dimensions: [QueueName]
+  #  aws_statistics: [Max]
+  #  set_timestamp: false
+  #
+  #- aws_namespace: AWS/SQS
+  #  aws_metric_name: ApproximateNumberOfMessagesDelayed
+  #  aws_dimensions: [QueueName]
+  #  aws_statistics: [Average]
+  #  set_timestamp: false
+  #
+  #- aws_namespace: AWS/SQS
+  #  aws_metric_name: ApproximateNumberOfMessagesNotVisible
+  #  aws_dimensions: [QueueName]
+  #  aws_statistics: [Average]
+  #  set_timestamp: false
+
+- aws_namespace: AWS/S3
+  aws_metric_name: BucketSizeBytes
+  aws_dimensions: [BucketName, StorageType]
+  aws_statistics: [Average]
+  range_seconds: 172800
+  period_seconds: 86400
+  set_timestamp: false

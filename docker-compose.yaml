@@ -5,52 +5,81 @@ services:
     ports: 
       - 9090:9090
     volumes:
-      - /home/augusto/tmp/prometheus-docker/prometheus.yml:/etc/prometheus/prometheus.yml
-      - /home/augusto/tmp/prometheus-docker/alerting.rules:/etc/prometheus/alerting.rules
+      - ./config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./config/prometheus/alerting.rules:/etc/prometheus/alerting.rules
+      - ./data-prometheus:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.console.libraries=/usr/share/prometheus/console_libraries"
+      - "--web.console.templates=/usr/share/prometheus/consoles"
+      - "--storage.tsdb.retention.time=30d"
     depends_on:
-    - cloudwatchexporter
-    - cadvisor
-    - alertmanager
+      - cloudwatchexporter_oregon
+      - cloudwatchexporter_virginia
+      - sqs-exporter
+      - cadvisor
+      - alertmanager
     links:
-    - cloudwatchexporter
-    - cadvisor
-    - alertmanager
+      - cloudwatchexporter_oregon
+      - cloudwatchexporter_virginia
+      - sqs-exporter
+      - cadvisor
+      - alertmanager
+    env_file:
+      - ./aws_credentials
 
   grafana:
     image: grafana/grafana
     ports:
       - "3000:3000"
     volumes:
-    - /home/augusto/tmp/prometheus-docker/data-grafana:/var/lib/grafana
+      - ./data-grafana:/var/lib/grafana
     depends_on:
-    - prometheus
+      - prometheus
     links:
-    - prometheus
+      - prometheus
 
-  cloudwatchexporter:
+  cloudwatchexporter_oregon:
     image: prom/cloudwatch-exporter 
     ports: 
-    - "9106:9106"
-    environment:
-    - AWS_ACCESS_KEY_ID=
-    - AWS_SECRET_ACCESS_KEY=
+      - "9106:9106"
+    env_file:
+      - ./aws_credentials
     volumes:
-    - /home/augusto/tmp/prometheus-docker/cloudwatchexporter.yaml:/config/config.yml
+      - ./config/cloudwatch/cloudwatchexporter_oregon.yaml:/config/config.yml
+
+  cloudwatchexporter_virginia:
+    image: prom/cloudwatch-exporter 
+    ports: 
+      - "9107:9106"
+    env_file:
+      - ./aws_credentials
+    volumes:
+      - ./config/cloudwatch/cloudwatchexporter_virginia.yaml:/config/config.yml
+
+  sqs-exporter:
+    image: jmal98/sqs-exporter:latest
+    ports:
+      - 9384:9384
+    env_file:
+      - ./aws_credentials
 
   cadvisor:
     image: google/cadvisor:latest
     ports:
-    - 8080:8080
+      - 8080:8080
     volumes:
-    - /:/rootfs:ro
-    - /var/run:/var/run:ro
-    - /sys:/sys:ro
-    - /var/lib/docker/:/var/lib/docker:ro
-    - /dev/disk/:/dev/disk:ro
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
 
   alertmanager:
     image: prom/alertmanager
     ports:
-    - 9093:9093
+      - 9093:9093
     volumes:
-    - /home/augusto/tmp/prometheus-docker/alertmanager_conf.yaml:/etc/alertmanager/alertmanager.yml
+      - ./config/alertmanager/alertmanager_conf.yaml:/etc/alertmanager/alertmanager.yml
+

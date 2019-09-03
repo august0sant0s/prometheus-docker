@@ -1,8 +1,8 @@
 ---
-region: us-east-1
+region: us-west-2
 metrics:
 - aws_namespace: AWS/ELB
   aws_metric_name: RequestCount
-  aws_dimensions: [LoadBalancerName]
+  aws_dimensions: [AvailabilityZone,LoadBalancerName]
   aws_statistics: [Sum]
   set_timestamp: false

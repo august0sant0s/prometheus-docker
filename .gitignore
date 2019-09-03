@@ -1,2 +1,4 @@
 *.old
 data-grafana/*
+data-prometheus/*
+aws_credentials
